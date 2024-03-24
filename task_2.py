@@ -1,21 +1,39 @@
-def get_cats_info(path):
+from typing import Callable
+
+def generator_numbers(text: str) -> float:
+    '''
+    Функція повинна приймати рядок як аргумент, аналізувати його,
+    і повертати генератор знайдених дійсних чисел у вхідному рядку.
+    Дійсні числа у тексті вважаються записаними без помилок і чітко відокремлені пробілами з обох боків
+    :param text: str — вхідний рядок для ідентифікації дійсних чисел в ньому
+    :yield: float - повертає дійсне чисел у вигляді генератора
+    '''
     
-    result_list = []
-   
-    try:
-        with open(path, "r", encoding="utf-8") as fh:
-            for line in fh:
-                
-                line_lst = line.strip().split(',') # читання чергового рядка і розбиття на проміжний список з потрібних елементів
-                result_list.append({"id": line_lst[0], "name": line_lst[1], "age": line_lst[2]}) # наповнення результуючого списку словником з елементів
-                
-    except FileNotFoundError as error:
-        print(f'Помилка шляху до файлу: {error}')
-    except Exception as general_error:
-        print(f'Не можливо прочитати файл: {general_error}')
-
-    return result_list
+    result = text.split() # розбиваемо рядок на список по роздільнику "пробіл"
+    
+    for num in result:
+        try:
+            number = float(num)
+            # застосовується конструкцію yield для створення генератора
+            yield number
+        except ValueError:
+            # якщо символ не можливо перевести в float: продовжуємо перебір списку 
+            continue
 
 
-cats_info = get_cats_info("cats_file.txt")
-print(cats_info)
+def sum_profit(text: str, func: Callable[[str], float]) -> float:
+    '''
+    Функція має використовувати генератор func для обчислення загальної суми чисел у вхідному рядку 
+    та приймати його як аргумент при виклику
+    :param text: str — вхідний рядок для обчислення загальної суми чисел в ньому
+    :param func: Callable[[str], float] — генератор дійсних чисел, ідентифікованих в рядку  
+    :return: float - повертає обчислену загальну суму чисел
+    '''
+    
+    # використання генератора та List Comprehensions для обчислення суми значень
+    return sum([x for x in func(text)])
+
+
+text = "Загальний дохід працівника складається з декількох частин: 1000.01 як основний дохід, доповнений додатковими надходженнями 27.45 і 324.00 доларів."
+total_income = sum_profit(text, generator_numbers)
+print(f"Загальний дохід: {total_income}")

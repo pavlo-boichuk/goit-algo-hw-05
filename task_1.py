@@ -1,23 +1,34 @@
-def total_salary(path):
-    
-    salary_sum = 0 # Загальна сума заробітної плати
-    lines_count = 0 # Кількість записів (розробників)
-   
-    try:
-        with open(path, "r", encoding="utf-8") as fh:
-            for line in fh:
-                
-                salary_sum += int(line.strip().split(',')[1])
-                lines_count += 1
-    except FileNotFoundError as error:
-        print(f'Помилка шляху до файлу: {error}')
-    except Exception as general_error:
-        print(f'Не можливо прочитати файл: {general_error}')
+from typing import Callable
 
-    average_salary = 0 if lines_count == 0 else int(salary_sum/lines_count)
-    
-    return (salary_sum, average_salary)
+def caching_fibonacci() -> Callable[[int], int]:
+    '''
+    Функція, яка генерує та повертає іншу функцію для обчислення n-те число Фібоначчі
+    :return: Callable[[int], int] - повертає іншу функцію для обчислення n-те число Фібоначчі
+    '''
 
+    cache_dict = {} # Створення порожнього словника для кешування
 
-total, average = total_salary("salary_file.txt")
-print(f"Загальна сума заробітної плати: {total}, Середня заробітна плата: {average}")
+    def fibonacci(n: int) -> int:
+        '''
+        Функція обчислює n-те число Фібоначчі. Якщо число вже знаходиться у кеші, функція має повертати значення з кешу
+        :param n: int — n-ий член ряду Фібоначчі
+        :return: int - повертає n-те число Фібоначчі
+        '''
+        if n <= 0:
+            return 0
+        elif n == 1:
+            return 1
+        elif n in cache_dict:
+            # Якщо число вже знаходиться у кеші, функція має повертати значення з кешу
+            return cache_dict[n]
+        else:
+            # Якщо число не знаходиться у кеші, функція має обчислити його, зберегти у кеш та повернути результат
+            cache_dict[n] = fibonacci(n - 1) + fibonacci(n - 2) # Використання рекурсії для обчислення чисел
+            return cache_dict[n]
+
+    return fibonacci
+
+# Створення замикання
+my_fibonacci = caching_fibonacci()
+print(my_fibonacci(10))
+print(my_fibonacci(15))
