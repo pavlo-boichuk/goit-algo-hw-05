@@ -1,4 +1,5 @@
 from typing import Callable
+import re
 
 def generator_numbers(text: str) -> float:
     '''
@@ -9,15 +10,12 @@ def generator_numbers(text: str) -> float:
     :yield: float - повертає дійсне чисел у вигляді генератора
     '''
     
-    result = text.split() # розбиваемо рядок на список по роздільнику "пробіл"
+    pattern = r'\s+(\d+\.\d+)?\s+' # Регулярний вираз для знаходження дійсних чисел вiдокремлених пробiлами
+    matches = re.findall(pattern, text)
     
-    for num in result:
-        try:
-            number = float(num) # даний підхід потенційно включатиме також цілі числа, а не тільки строго дійсні
-            yield number  # застосовується конструкцію yield для створення генератора
-        except ValueError:
-            continue # якщо символ не можливо перевести в float: продовжуємо перебір списку
-
+    for num in matches:
+        yield float(num)
+    
 
 def sum_profit(text: str, func: Callable[[str], float]) -> float:
     '''
