@@ -13,12 +13,10 @@ def generator_numbers(text: str) -> float:
     
     for num in result:
         try:
-            number = float(num)
-            # застосовується конструкцію yield для створення генератора
-            yield number
+            number = float(num) # даний підхід потенційно включатиме також цілі числа, а не тільки строго дійсні
+            yield number  # застосовується конструкцію yield для створення генератора
         except ValueError:
-            # якщо символ не можливо перевести в float: продовжуємо перебір списку 
-            continue
+            continue # якщо символ не можливо перевести в float: продовжуємо перебір списку
 
 
 def sum_profit(text: str, func: Callable[[str], float]) -> float:
